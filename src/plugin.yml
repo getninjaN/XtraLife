@@ -1,0 +1,20 @@
+name: XtraLife
+main: se.xtralarge.xtralife.XtraLife
+version: 0.0.2
+description: Save players inventory on death, and offer player to buy it back.
+
+commands:
+   xtralife:
+      description: Restores your items/location, if possible.
+      usage: /xtralife
+   xtradeath:
+      description: Dismiss inventory/location. Act normal.
+      usage: /xtradeath
+
+permissions:
+  xtralife.use:
+    description: Allows use of XtraLife commands
+    default: op
+  xtralife.free:
+    description: Allows XtraLife for free.
+    default: false
