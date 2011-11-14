@@ -74,7 +74,7 @@ public class XtraLife extends JavaPlugin {
     }
 
     private void handleDeathCommand(Player player) {
-        BuybackManager.dimissInventory(player);
+        BuybackManager.dismissInventory(player);
         player.sendMessage(XtraLife.chatPrefix + "Your items have been dropped at " + ChatColor.RED + "death location");
     }
 }
