@@ -1,6 +1,6 @@
 name: XtraLife
 main: se.xtralarge.xtralife.XtraLife
-version: 0.0.3
+version: 0.0.4
 description: Save players inventory on death, and offer player to buy it back.
 
 commands:
