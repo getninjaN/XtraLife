@@ -10,10 +10,10 @@ public class BuybackManager {
     private static ConcurrentHashMap<String, DeathSnapshot> deathSnapshots = new ConcurrentHashMap<String, DeathSnapshot>();
 
     public static void saveInventory(Player player) {
-        if(hasInventory(player.getName())) {
+        if (hasInventory(player.getName())) {
             dismissInventory(player);
         }
-        
+
         DeathSnapshot snapshot = new DeathSnapshot(player.getInventory().getContents(), player.getInventory().getArmorContents(), player.getLocation());
         deathSnapshots.put(player.getName(), snapshot);
     }
@@ -40,9 +40,9 @@ public class BuybackManager {
         if (hasInventory(player.getName())) {
             DeathSnapshot snapshot = deathSnapshots.get(player.getName());
             Location deathLocation = snapshot.getPlaceOfDeath();
-            
+
             XtraLife.log.info("XtraLife: Player " + player.getName() + " dismissed snapshot");
-            
+
             for (ItemStack stack : snapshot.getArmorContents()) {
                 if (stack != null && stack.getAmount() > 0) {
                     XtraLife.log.info("XtraLife: dropping: " + stack.toString());

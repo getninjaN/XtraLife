@@ -1,6 +1,7 @@
 package se.xtralarge.xtralife;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
@@ -20,6 +21,16 @@ public class XtraEntityListener extends EntityListener {
             if (player.hasPermission("xtralife.use")) {
                 event.getDrops().clear();
                 BuybackManager.saveInventory(player);
+            }
+        }
+    }
+
+    @Override
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (XtraLife.hasGodMode(player.getName())) {
+                event.setCancelled(true);
             }
         }
     }

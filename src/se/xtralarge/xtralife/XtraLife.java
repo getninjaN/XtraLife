@@ -1,5 +1,8 @@
 package se.xtralarge.xtralife;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,6 +19,8 @@ public class XtraLife extends JavaPlugin {
     public static final Logger log = Logger.getLogger("Minecraft");
     public static final String chatPrefix = ChatColor.GOLD + "XtraLife: " + ChatColor.WHITE;
     public static int restoreFee = 0;
+    private static List<String> playerGodModeList = Collections.synchronizedList(new ArrayList<String>());
+    private static final long godModeLength = 400; // 400/20(tic) = 20 sec
 
     @Override
     public void onDisable() {
@@ -26,6 +31,7 @@ public class XtraLife extends JavaPlugin {
     public void onEnable() {
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
 
         log.info(this.getDescription().getFullName() + " is enabled!");
@@ -40,8 +46,8 @@ public class XtraLife extends JavaPlugin {
             sender.sendMessage(("XtraLife is only for real players."));
             return true;
         }
-        
-        if(!player.hasPermission("xtralife.use")) {
+
+        if (!player.hasPermission("xtralife.use")) {
             return true;
         }
 
@@ -66,8 +72,8 @@ public class XtraLife extends JavaPlugin {
     }
 
     private void handleLifeCommand(Player player) {
-        // kontroll om man har permission/restore-snapshot/credits. dra credits. restore. :)
-        // kanske neka ifall man har nåt i inventory osv..
+        this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new RemoveGodModeTask(player.getName(), this), godModeLength);
+        XtraLife.addGodMode(player.getName());
         BuybackManager.restoreInventory(player);
         player.sendMessage(XtraLife.chatPrefix + "Your inventory/location was " + ChatColor.GREEN + "restored.");
         player.sendMessage(XtraLife.chatPrefix + ChatColor.RED + XtraLife.restoreFee + " credits was withdrawn.");
@@ -76,5 +82,45 @@ public class XtraLife extends JavaPlugin {
     private void handleDeathCommand(Player player) {
         BuybackManager.dismissInventory(player);
         player.sendMessage(XtraLife.chatPrefix + "Your items have been dropped at " + ChatColor.RED + "death location");
+    }
+
+    public static void removeGodMode(String playername) {
+        if (playerGodModeList.contains(playername)) {
+            playerGodModeList.remove(playername);
+        }
+    }
+
+    public static void addGodMode(String playername) {
+        if (!playerGodModeList.contains(playername)) {
+            playerGodModeList.add(playername);
+        }
+    }
+
+    public static boolean hasGodMode(String playername) {
+        if (playerGodModeList.contains(playername)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private class RemoveGodModeTask implements Runnable {
+
+        private String playername;
+        private XtraLife instance;
+
+        RemoveGodModeTask(String playername, XtraLife instance) {
+            this.playername = playername;
+            this.instance = instance;
+        }
+
+        @Override
+        public void run() {
+            XtraLife.removeGodMode(this.playername);
+            Player player = instance.getServer().getPlayer(this.playername);
+            if (player != null) {
+                player.sendMessage(XtraLife.chatPrefix + ChatColor.RED + "No more godmode for you!");
+            }
+        }
     }
 }
