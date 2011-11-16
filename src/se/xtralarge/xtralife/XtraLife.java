@@ -24,7 +24,7 @@ public class XtraLife extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // fixa deathsnapshot serializeble osv spara/ladda 
+        log.info(this.getDescription().getFullName() + " is disabled!");
     }
 
     @Override
