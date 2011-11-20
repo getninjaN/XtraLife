@@ -9,13 +9,18 @@ public class DeathSnapshot {
     private ItemStack[] armorContents;
     private Location placeOfDeath;
     private int timeOfDeath;
+    private int totalExperience;
 
-    DeathSnapshot(ItemStack[] contents, ItemStack[] armorContents, Location placeOfDeath) {
+    DeathSnapshot(ItemStack[] contents, ItemStack[] armorContents, Location placeOfDeath, int totalExperience) {
         this.contents = contents;
         this.armorContents = armorContents;
         this.placeOfDeath = placeOfDeath;
         this.timeOfDeath = (int) (System.currentTimeMillis() / 1000);
-        //XtraLife.log.info("New DeathSnapshot at timestamp: " + this.timeOfDeath);
+        this.totalExperience = totalExperience;
+    }
+
+    public int getTotalExperience() {
+        return totalExperience;
     }
 
     public int getTimeOfDeath() {

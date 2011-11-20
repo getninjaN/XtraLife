@@ -14,7 +14,7 @@ public class BuybackManager {
             dismissInventory(player);
         }
 
-        DeathSnapshot snapshot = new DeathSnapshot(player.getInventory().getContents(), player.getInventory().getArmorContents(), player.getLocation());
+        DeathSnapshot snapshot = new DeathSnapshot(player.getInventory().getContents(), player.getInventory().getArmorContents(), player.getLocation(), player.getTotalExperience());
         deathSnapshots.put(player.getName(), snapshot);
     }
 
@@ -24,6 +24,7 @@ public class BuybackManager {
             player.teleport(snapshot.getPlaceOfDeath());
             player.getInventory().setArmorContents(snapshot.getArmorContents());
             player.getInventory().setContents(snapshot.getContents());
+            player.setTotalExperience(snapshot.getTotalExperience());
             deathSnapshots.remove(player.getName());
         }
     }
