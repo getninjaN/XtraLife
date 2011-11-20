@@ -1,5 +1,6 @@
 package se.xtralarge.xtralife;
 
+import com.nijiko.coelho.iConomy.iConomy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +19,10 @@ public class XtraLife extends JavaPlugin {
     private final XtraPlayerListener playerListener = new XtraPlayerListener(this);
     public static final Logger log = Logger.getLogger("Minecraft");
     public static final String chatPrefix = ChatColor.GOLD + "XtraLife: " + ChatColor.WHITE;
-    public static int restoreFee = 0;
+    public static int restoreFee = 15;
     private static List<String> playerGodModeList = Collections.synchronizedList(new ArrayList<String>());
     private static final long godModeLength = 400; // 400/20(tic) = 20 sec
+    private iConomy iConomyPlugin;
 
     @Override
     public void onDisable() {
@@ -33,7 +35,10 @@ public class XtraLife extends JavaPlugin {
         pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
-
+        iConomyPlugin = (iConomy) this.getServer().getPluginManager().getPlugin("iConomy");
+        if(iConomyPlugin == null) {
+            XtraLife.restoreFee = 0;
+        }
         log.info(this.getDescription().getFullName() + " is enabled!");
     }
 
@@ -72,6 +77,16 @@ public class XtraLife extends JavaPlugin {
     }
 
     private void handleLifeCommand(Player player) {
+        if(XtraLife.restoreFee > 0) {
+            if(iConomy.getBank().getAccount(player.getName()).hasEnough(XtraLife.restoreFee)) {
+                iConomy.getBank().getAccount(player.getName()).subtract(XtraLife.restoreFee);
+                iConomy.getBank().getAccount("Corningstone").add(restoreFee);
+            } else {
+                player.sendMessage(XtraLife.chatPrefix + "You cannot afford to buy back. Need " + ChatColor.RED + XtraLife.restoreFee + " c");
+                return;
+            }
+        }
+        
         this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new RemoveGodModeTask(player.getName(), this), godModeLength);
         XtraLife.addGodMode(player.getName());
         BuybackManager.restoreInventory(player);
