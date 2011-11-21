@@ -42,7 +42,7 @@ public class BuybackManager {
             DeathSnapshot snapshot = deathSnapshots.get(player.getName());
             Location deathLocation = snapshot.getPlaceOfDeath();
 
-            XtraLife.log.info("XtraLife: Player " + player.getName() + " dismissed snapshot");
+            XtraLife.log.info("XtraLife: Player " + player.getName() + " dismissed snapshot at " + deathLocation.toString());
 
             for (ItemStack stack : snapshot.getArmorContents()) {
                 if (stack != null && stack.getAmount() > 0) {
